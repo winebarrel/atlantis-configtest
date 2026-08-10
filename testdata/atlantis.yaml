@@ -1,0 +1,6 @@
+version: 3
+projects:
+- dir: .
+  workflow: defined-in-repos-yaml
+  apply_requirements: [approved]
+  custom_policy_check: true
