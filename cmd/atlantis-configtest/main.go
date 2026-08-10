@@ -11,8 +11,8 @@ var version string
 
 var cli struct {
 	Version    kong.VersionFlag
-	ServerRepo configtest.ServerRepoCmd `cmd:"" help:"Validate server-side repo config files (repos.yaml)."`
-	Repo       configtest.RepoCmd       `cmd:"" help:"Validate repo-level config files (atlantis.yaml)."`
+	ServerRepo configtest.ServerRepoCmd `cmd:"" help:"Validate a server-side repo config file (repos.yaml)."`
+	Repo       configtest.RepoCmd       `cmd:"" help:"Validate a repo-level config file (atlantis.yaml)."`
 }
 
 func main() {
