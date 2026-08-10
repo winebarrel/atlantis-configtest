@@ -1,0 +1,3 @@
+repos:
+- id: /.*/
+  allowed_overrides: [nonexistent_key]

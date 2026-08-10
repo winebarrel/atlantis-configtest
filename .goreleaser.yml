@@ -1,0 +1,22 @@
+version: 2
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - main: ./cmd/atlantis-configtest
+    ldflags:
+      - -X main.version={{.Version}}
+    env:
+      - CGO_ENABLED=0
+checksum:
+  name_template: "checksums.txt"
+nfpms:
+  - file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
+    homepage: https://github.com/winebarrel/atlantis-configtest
+    description: Validate the structure of Atlantis configuration files.
+    license: MIT
+    maintainer: "Genki Sugawara <sugawara@winebarrel.jp>"
+    formats:
+      - apk
+      - deb
+      - rpm
