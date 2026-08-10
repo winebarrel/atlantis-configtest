@@ -5,9 +5,9 @@ import (
 	"github.com/runatlantis/atlantis/server/core/config/valid"
 )
 
-// ServerRepoCmd validates server-side repo config files (repos.yaml).
+// ServerRepoCmd validates a server-side repo config file (repos.yaml).
 type ServerRepoCmd struct {
-	Files []string `arg:"" name:"file" help:"Server-side repo config file (repos.yaml)."`
+	File string `arg:"" name:"file" help:"Server-side repo config file (repos.yaml)."`
 }
 
 func (cmd *ServerRepoCmd) Run(cmdCtx *Context) error {
@@ -17,8 +17,8 @@ func (cmd *ServerRepoCmd) Run(cmdCtx *Context) error {
 	// The defaults it merges in do not affect whether a file is valid.
 	defaultCfg := valid.NewGlobalCfgFromArgs(valid.GlobalCfgArgs{})
 
-	return cmdCtx.validate(cmd.Files, func(file string) error {
-		_, err := parserValidator.ParseGlobalCfg(file, defaultCfg)
+	return cmdCtx.validate(func() error {
+		_, err := parserValidator.ParseGlobalCfg(cmd.File, defaultCfg)
 
 		return err
 	})

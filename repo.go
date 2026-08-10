@@ -8,16 +8,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// RepoCmd validates repo-level config files (atlantis.yaml).
+// RepoCmd validates a repo-level config file (atlantis.yaml).
 type RepoCmd struct {
-	Files []string `arg:"" name:"file" help:"Repo-level config file (atlantis.yaml)."`
+	File string `arg:"" name:"file" help:"Repo-level config file (atlantis.yaml)."`
 }
 
 func (cmd *RepoCmd) Run(cmdCtx *Context) error {
 	parserValidator := &config.ParserValidator{}
 
-	return cmdCtx.validate(cmd.Files, func(file string) error {
-		data, err := os.ReadFile(file)
+	return cmdCtx.validate(func() error {
+		data, err := os.ReadFile(cmd.File)
 
 		if err != nil {
 			return err

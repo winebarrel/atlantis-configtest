@@ -10,43 +10,28 @@ import (
 
 func TestServerRepoCmd(t *testing.T) {
 	tests := []struct {
-		name    string
-		files   []string
-		errMsg  string
-		reports []string
+		name   string
+		file   string
+		errMsg string
 	}{
 		{
-			name:    "valid",
-			files:   []string{"testdata/repos.yaml"},
-			reports: []string{"testdata/repos.yaml: ok\n"},
+			name: "valid",
+			file: "testdata/repos.yaml",
 		},
 		{
-			name:    "unknown key",
-			files:   []string{"testdata/repos_unknown_key.yaml"},
-			errMsg:  "1 of 1 file(s) invalid",
-			reports: []string{"field apply_requirement not found"},
+			name:   "unknown key",
+			file:   "testdata/repos_unknown_key.yaml",
+			errMsg: "field apply_requirement not found",
 		},
 		{
-			name:    "unsupported override",
-			files:   []string{"testdata/repos_invalid_override.yaml"},
-			errMsg:  "1 of 1 file(s) invalid",
-			reports: []string{`"nonexistent_key" is not a valid override`},
+			name:   "unsupported override",
+			file:   "testdata/repos_invalid_override.yaml",
+			errMsg: `"nonexistent_key" is not a valid override`,
 		},
 		{
-			name:    "missing file",
-			files:   []string{"testdata/nonexistent.yaml"},
-			errMsg:  "1 of 1 file(s) invalid",
-			reports: []string{"no such file or directory"},
-		},
-		{
-			name:   "every file is checked",
-			files:  []string{"testdata/repos_unknown_key.yaml", "testdata/repos.yaml", "testdata/repos_invalid_override.yaml"},
-			errMsg: "2 of 3 file(s) invalid",
-			reports: []string{
-				"testdata/repos_unknown_key.yaml: ",
-				"testdata/repos.yaml: ok\n",
-				"testdata/repos_invalid_override.yaml: ",
-			},
+			name:   "missing file",
+			file:   "testdata/nonexistent.yaml",
+			errMsg: "no such file or directory",
 		},
 	}
 
@@ -54,18 +39,16 @@ func TestServerRepoCmd(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			assert := assert.New(t)
 			out := &bytes.Buffer{}
-			cmd := &configtest.ServerRepoCmd{Files: tt.files}
+			cmd := &configtest.ServerRepoCmd{File: tt.file}
 
 			err := cmd.Run(&configtest.Context{ErrOutput: out})
 
 			if tt.errMsg == "" {
 				assert.NoError(err)
+				assert.Equal("ok\n", out.String())
 			} else {
-				assert.EqualError(err, tt.errMsg)
-			}
-
-			for _, report := range tt.reports {
-				assert.Contains(out.String(), report)
+				assert.ErrorContains(err, tt.errMsg)
+				assert.Empty(out.String())
 			}
 		})
 	}

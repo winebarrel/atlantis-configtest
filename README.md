@@ -28,29 +28,25 @@ Flags:
       --version
 
 Commands:
-  server-repo <file> ... [flags]
-    Validate server-side repo config files (repos.yaml).
+  server-repo <file> [flags]
+    Validate a server-side repo config file (repos.yaml).
 
-  repo <file> ... [flags]
-    Validate repo-level config files (atlantis.yaml).
+  repo <file> [flags]
+    Validate a repo-level config file (atlantis.yaml).
 
 Run "atlantis-configtest <command> --help" for more information on a command.
 ```
 
-Every file is reported on stderr, and the exit status is 1 if any of them fails:
+The result is reported on stderr, and the exit status is 1 if the file is rejected:
 
 ```sh
 $ atlantis-configtest server-repo repos.yaml
-repos.yaml: ok
+ok
 $ echo $?
 0
 
-$ atlantis-configtest server-repo repos.yaml broken.yaml
-repos.yaml: ok
-broken.yaml: repos: (0: (allowed_overrides: "nonexistent_key" is not a valid override, only "plan_requirements", ... are supported.).).
-atlantis-configtest: error: 1 of 2 file(s) invalid
+$ atlantis-configtest server-repo broken.yaml
+atlantis-configtest: error: repos: (0: (allowed_overrides: "nonexistent_key" is not a valid override, only "plan_requirements", ... are supported.).).
 $ echo $?
 1
 ```
-
-Every file is checked even after one of them fails, so a single broken file does not hide the rest.

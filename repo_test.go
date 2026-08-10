@@ -10,52 +10,36 @@ import (
 
 func TestRepoCmd(t *testing.T) {
 	tests := []struct {
-		name    string
-		files   []string
-		errMsg  string
-		reports []string
+		name   string
+		file   string
+		errMsg string
 	}{
 		{
 			// The file names a workflow defined in repos.yaml and sets keys that
 			// need allowed_overrides. None of that can be judged from this file
 			// alone, so it must pass.
-			name:    "settings that depend on the server side",
-			files:   []string{"testdata/atlantis.yaml"},
-			reports: []string{"testdata/atlantis.yaml: ok\n"},
+			name: "settings that depend on the server side",
+			file: "testdata/atlantis.yaml",
 		},
 		{
-			name:    "unknown key",
-			files:   []string{"testdata/atlantis_unknown_key.yaml"},
-			errMsg:  "1 of 1 file(s) invalid",
-			reports: []string{"field directory not found"},
+			name:   "unknown key",
+			file:   "testdata/atlantis_unknown_key.yaml",
+			errMsg: "field directory not found",
 		},
 		{
-			name:    "duplicate project",
-			files:   []string{"testdata/atlantis_duplicate_project.yaml"},
-			errMsg:  "1 of 1 file(s) invalid",
-			reports: []string{"there are two or more projects with dir"},
+			name:   "duplicate project",
+			file:   "testdata/atlantis_duplicate_project.yaml",
+			errMsg: "there are two or more projects with dir",
 		},
 		{
-			name:    "broken yaml",
-			files:   []string{"testdata/atlantis_broken.yaml"},
-			errMsg:  "1 of 1 file(s) invalid",
-			reports: []string{"did not find expected key"},
+			name:   "broken yaml",
+			file:   "testdata/atlantis_broken.yaml",
+			errMsg: "did not find expected key",
 		},
 		{
-			name:    "missing file",
-			files:   []string{"testdata/nonexistent.yaml"},
-			errMsg:  "1 of 1 file(s) invalid",
-			reports: []string{"no such file or directory"},
-		},
-		{
-			name:   "every file is checked",
-			files:  []string{"testdata/atlantis_unknown_key.yaml", "testdata/atlantis.yaml", "testdata/atlantis_broken.yaml"},
-			errMsg: "2 of 3 file(s) invalid",
-			reports: []string{
-				"testdata/atlantis_unknown_key.yaml: ",
-				"testdata/atlantis.yaml: ok\n",
-				"testdata/atlantis_broken.yaml: ",
-			},
+			name:   "missing file",
+			file:   "testdata/nonexistent.yaml",
+			errMsg: "no such file or directory",
 		},
 	}
 
@@ -63,18 +47,16 @@ func TestRepoCmd(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			assert := assert.New(t)
 			out := &bytes.Buffer{}
-			cmd := &configtest.RepoCmd{Files: tt.files}
+			cmd := &configtest.RepoCmd{File: tt.file}
 
 			err := cmd.Run(&configtest.Context{ErrOutput: out})
 
 			if tt.errMsg == "" {
 				assert.NoError(err)
+				assert.Equal("ok\n", out.String())
 			} else {
-				assert.EqualError(err, tt.errMsg)
-			}
-
-			for _, report := range tt.reports {
-				assert.Contains(out.String(), report)
+				assert.ErrorContains(err, tt.errMsg)
+				assert.Empty(out.String())
 			}
 		})
 	}
