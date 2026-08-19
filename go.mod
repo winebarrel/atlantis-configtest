@@ -1,10 +1,10 @@
 module github.com/winebarrel/atlantis-configtest
 
-go 1.26.4
+go 1.26.5
 
 require (
 	github.com/alecthomas/kong v1.16.1
-	github.com/runatlantis/atlantis v0.46.0
+	github.com/runatlantis/atlantis v0.47.0
 	github.com/stretchr/testify v1.12.0
 	gopkg.in/yaml.v3 v3.0.1
 )
