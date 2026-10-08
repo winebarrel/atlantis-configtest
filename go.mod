@@ -4,7 +4,7 @@ go 1.27.1
 
 require (
 	github.com/alecthomas/kong v1.16.1
-	github.com/runatlantis/atlantis v0.48.0
+	github.com/runatlantis/atlantis v0.48.1
 	github.com/stretchr/testify v1.12.1
 	gopkg.in/yaml.v3 v3.0.1
 )
